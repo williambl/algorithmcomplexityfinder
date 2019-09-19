@@ -26,6 +26,12 @@ fun main() {
 
 
     for (pair in resultsAndAlgorithms) {
-        println("${pair.key}: ${pair.value.average()} nanos")
+        println("""
+            |${pair.key}:
+            |   Average: ${pair.value.average()} nanos
+            |   Minimum: ${pair.value.min()} nanos
+            |   Maximum: ${pair.value.max()} nanos
+            |   Range: ${pair.value.max()?.minus(pair.value.min() ?: 0)} nanos
+        """.trimMargin())
     }
 }
