@@ -7,7 +7,7 @@ val attempts: Int = 5
 val arrayLength: Int = 50
 
 val algorithms: Map<String, (IntArray) -> Unit> = mapOf(
-    Pair("test", { _: IntArray -> println("test") })
+    Pair("printing", { input: IntArray -> input.forEach { println(it) } })
 )
 
 fun main() {
