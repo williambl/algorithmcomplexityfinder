@@ -3,14 +3,14 @@ package com.williambl.algorithmcomplexityfinder
 import kotlin.random.Random
 import kotlin.system.measureNanoTime
 
-val attempts: Int = 5
-val arrayLength: Int = 50
 
 val algorithms: Map<String, (IntArray) -> Unit> = mapOf(
     Pair("printing", { input: IntArray -> input.forEach { println(it) } })
 )
 
-fun main() {
+fun main(args: Array<String>) {
+    val attempts = args.getOrNull(0)?.toInt() ?: 5
+    val arrayLength = args.getOrNull(1)?.toInt() ?: 500
 
     val resultsAndAlgorithms: Map<String, Map<Int, MutableList<Long>>> =
         algorithms.map {
@@ -29,7 +29,6 @@ fun main() {
             }
         }
     }
-
 
     for (pair in resultsAndAlgorithms) {
         println("""
