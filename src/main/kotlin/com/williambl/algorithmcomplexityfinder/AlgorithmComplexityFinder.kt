@@ -12,15 +12,21 @@ val algorithms: Map<String, (IntArray) -> Unit> = mapOf(
 
 fun main() {
 
-    val resultsAndAlgorithms: Map<String, MutableList<Long>> = algorithms.map { it.key to mutableListOf<Long>() }.toMap()
+    val resultsAndAlgorithms: Map<String, Map<Int, MutableList<Long>>> =
+        algorithms.map {
+            it.key to List(arrayLength) { index -> index+1 }.map { it1 -> it1 to mutableListOf<Long>() }.toMap()
+        }.toMap()
+
     for (algorithm in algorithms) {
         for (i in 0 until attempts) {
-            val input: IntArray = IntArray(arrayLength) { Random.nextInt() }
-            resultsAndAlgorithms[algorithm.key]?.add(
-                measureNanoTime {
-                    algorithm.value(input)
-                }
-            )
+            for (j in 1..arrayLength) {
+                val input: IntArray = IntArray(j) { Random.nextInt() }
+                resultsAndAlgorithms[algorithm.key]?.get(j)?.add(
+                    measureNanoTime {
+                        algorithm.value(input)
+                    }
+                )
+            }
         }
     }
 
@@ -28,10 +34,9 @@ fun main() {
     for (pair in resultsAndAlgorithms) {
         println("""
             |${pair.key}:
-            |   Average: ${pair.value.average()} nanos
-            |   Minimum: ${pair.value.min()} nanos
-            |   Maximum: ${pair.value.max()} nanos
-            |   Range: ${pair.value.max()?.minus(pair.value.min() ?: 0)} nanos
+            |   Average for ${arrayLength/5}-length array: ${pair.value[arrayLength/5]?.average()} nanos
+            |   Average for ${arrayLength}-length array: ${pair.value[arrayLength]?.average()} nanos
+            |   Difference: ${pair.value[arrayLength/5]?.average()?.minus(pair.value[arrayLength]?.average() ?: 0.0)} nanos
         """.trimMargin())
     }
 }
