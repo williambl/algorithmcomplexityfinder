@@ -1,5 +1,6 @@
 package com.williambl.algorithmcomplexityfinder
 
+import kotlin.math.abs
 import kotlin.random.Random
 import kotlin.system.measureNanoTime
 
@@ -9,7 +10,7 @@ val algorithms: Map<String, (IntArray) -> Unit> = mapOf(
 )
 
 fun main(args: Array<String>) {
-    val attempts = args.getOrNull(0)?.toInt() ?: 5
+    val attempts = args.getOrNull(0)?.toInt() ?: 50
     val arrayLength = args.getOrNull(1)?.toInt() ?: 500
 
     val resultsAndAlgorithms: Map<String, Map<Int, MutableList<Long>>> =
@@ -37,6 +38,31 @@ fun main(args: Array<String>) {
             |   Average for ${arrayLength}-length array: ${pair.value[arrayLength]?.average()} nanos
             |   Difference: ${pair.value[arrayLength]?.average()?.minus(pair.value[arrayLength/5]?.average() ?: 0.0)} nanos
             |   Factor: ${(pair.value[arrayLength]?.average()?.div(pair.value[arrayLength/5]?.average() ?: 0.0))} times
+            |   Most likely to be: ${getMostLikelyComplexity((pair.value[arrayLength]?.average()?.div(pair.value[arrayLength/5]?.average() ?: 0.0)) ?: 0.0)}
         """.trimMargin())
     }
+}
+
+fun getMostLikelyComplexity(factorIn: Double): String {
+    val factors = mapOf(
+        Pair("O(1)", 0.0),
+        Pair("O(log n)", 0.69),
+        Pair("O(n log n)", 3.49),
+        Pair("O(n)", 5.0),
+        Pair("O(n^2)", 25.0),
+        Pair("O(2^n)", 1024.0)
+    )
+
+    var difference = Double.MAX_VALUE
+    var candidate = "---"
+    for (factor in factors) {
+        val currentDiff = abs(factorIn - factor.value)
+
+        if (currentDiff < difference) {
+            difference = currentDiff
+            candidate = factor.key
+        }
+    }
+
+    return candidate
 }
